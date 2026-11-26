@@ -1,10 +1,9 @@
-// Entrypoint for the news-image bounty: hand the judge exactly the PNG that
-// render.py drew. The guardrails below fail loudly instead of shipping a
-// truncated or oversized image, and keep the run deterministic (one read, one
-// write, no clock or network access).
+// Entrypoint: validate the drawn poster and copy it verbatim to /output.
+// Standard library only; no clock, network or randomness in the judged path.
 
-import { copyFileSync, mkdirSync, readFileSync, statSync } from 'node:fs';
+import { copyFileSync, existsSync, mkdirSync, readFileSync, statSync } from 'node:fs';
 import { dirname, join } from 'node:path';
+import { crc32 } from 'node:zlib';
 import { fileURLToPath } from 'node:url';
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -12,33 +11,42 @@ const source = join(here, 'entry.png');
 const outDir = process.env.MAKEFUN_OUTPUT_DIR ?? '/output';
 const target = join(outDir, 'entry.png');
 
-const MAX_BYTES = 1024 * 1024;
-const MAX_SIDE = 1024;
+const MAX_BYTES = 1048576;
+const SIDE = 1024;
 const PNG_SIGNATURE = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]);
 
-const bytes = readFileSync(source);
-if (bytes.length < 1024) {
-  throw new Error('entry.png is implausibly small; the poster was not rendered');
+if (!existsSync(source)) {
+  throw new Error(`missing ${source}`);
 }
+const bytes = readFileSync(source);
 if (bytes.length > MAX_BYTES) {
-  throw new Error(`entry.png is ${bytes.length} bytes; the gate allows ${MAX_BYTES}`);
+  throw new Error(`entry.png is ${bytes.length} bytes; limit is ${MAX_BYTES}`);
 }
 if (!bytes.subarray(0, 8).equals(PNG_SIGNATURE)) {
   throw new Error('entry.png is not a PNG');
 }
 
-// IHDR is the first chunk: 4-byte length, "IHDR", width, height, then depth.
+// IHDR is always the first chunk: length(4), "IHDR", width(4), height(4).
 const width = bytes.readUInt32BE(16);
 const height = bytes.readUInt32BE(20);
-if (width > MAX_SIDE || height > MAX_SIDE) {
-  throw new Error(`entry.png is ${width}x${height}; the side limit is ${MAX_SIDE}`);
+if (width !== SIDE || height !== SIDE) {
+  throw new Error(`expected ${SIDE}x${SIDE}, got ${width}x${height}`);
+}
+
+// CRC covers the IHDR type + 13 data bytes (offset 12..28); stored at 29..32.
+const storedCrc = bytes.readUInt32BE(29);
+if (crc32(bytes.subarray(12, 29)) !== storedCrc) {
+  throw new Error('entry.png has a corrupt IHDR chunk');
+}
+const bitDepth = bytes[24];
+const colorType = bytes[25];
+if (bitDepth !== 8 || (colorType !== 2 && colorType !== 6)) {
+  throw new Error(`unexpected PNG format: depth ${bitDepth}, color ${colorType}`);
 }
 
 mkdirSync(outDir, { recursive: true });
 copyFileSync(source, target);
-
-const written = statSync(target).size;
-if (written !== bytes.length) {
-  throw new Error(`copy is ${written} bytes, source is ${bytes.length}`);
+if (statSync(target).size !== bytes.length) {
+  throw new Error('output copy differs in size from entry.png');
 }
-console.log(`entry.png ${width}x${height}, ${written} bytes -> ${target}`);
+console.log(`entry.png ${width}x${height}, ${bytes.length} bytes -> ${target}`);
