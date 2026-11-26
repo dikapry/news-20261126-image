@@ -266,33 +266,33 @@ DATE_CHECK = [
 ]
 
 BRIEFS = [
-    "10  WASHINGTON  Court blocks new birthright-citizenship curbs",
-    "11  WASHINGTON  Fed's Beige Book flags prices, wage growth",
-    "12  NEW YORK  King tides bring flood warnings",
-    "13  BRUSSELS  Leaders debate 2028-34 EU budget",
-    "14  PARIS  Students march over campus budget",
-    "15  KYIV  US clears F-16 maintenance equipment sale",
-    "16  GAZA  Aid-site contractors accused of live fire",
-    "17  ADEN  Houthis press toward Yemen's interim capital",
-    "18  BRUSSELS  Belgium split over Iran cyberattack claim",
-    "19  DHAKA  New garment minimum wage Tk 17,000",
-    "20  NEW DELHI  India urges human control of weapons",
-    "21  ISLAMABAD  Zeeshan Ali enters China's space station",
-    "22  CANBERRA  Inflation hits 4.9%, a three-year high",
-    "23  SYDNEY  Virgin staff strike at four airports",
-    "24  SEOUL  Kospi leads Asian share rebound",
-    "25  BEIJING  China rejects 'overcapacity' claim",
-    "26  TOKYO  Chip market shifts after remote-access rule",
-    "27  BRASILIA  New curbs on household debt",
-    "28  BOGOTA  76 hostages freed after supermarket siege",
-    "29  LUSAKA  Zambia bars term-limit protests",
-    "30  BELGRADE  Media owner arrested",
-    "31  GENEVA  AI worries drag US tech stocks lower",
-    "32  NIGERIA  62 Ebola contacts cleared",
-    "33  GUINEA  10 dead in gold-mining clashes",
-    "34  MEXICO  Search for six after plane crash",
-    "35  IOWA  Army hails bomb-chemicals blast",
-    "36  ATACAMA  New telescope eyes Earth-like planets",
+    "10  Court blocks Trump birthright curbs",
+    "11  Fed sees prices, wages rising",
+    "12  King tides bring flood warnings",
+    "13  EU budget, Ukraine aid talks open",
+    "14  Paris students march on campus budget",
+    "15  US clears F-16 gear for Kyiv",
+    "16  Gaza aid guards accused of live fire",
+    "17  Houthis close in on Aden",
+    "18  Belgium split over Iran hack claim",
+    "19  Bangladesh sets Tk 17,000 wage floor",
+    "20  India urges human control of arms",
+    "21  First Pakistani astronaut on Tiangong",
+    "22  Australia inflation hits 4.9%",
+    "23  Virgin staff strike at 4 airports",
+    "24  Kospi leads Asian share rebound",
+    "25  China rejects overcapacity claim",
+    "26  Tokyo chips shift after China rule",
+    "27  Brazil tightens household debt rules",
+    "28  76 hostages freed in Bogota siege",
+    "29  Zambia bars term-limit protests",
+    "30  Belgrade detains media owner",
+    "31  US tech stocks slip on AI fears",
+    "32  Nigeria clears 62 Ebola contacts",
+    "33  10 dead in Guinea mining clashes",
+    "34  Search for six after US plane crash",
+    "35  Iowa bomb-chemicals blast hailed",
+    "36  Chile telescope to hunt Earth-like worlds",
 ]
 
 
@@ -305,7 +305,7 @@ def lead_card(d: ImageDraw.ImageDraw, x: int, y: int, w: int, h: int, item: dict
     d.rectangle((x + w - 150, y + 66, x + w - 16, y + 92), fill=NAVY)
     d.text((x + w - 83, y + 79), item["tag"], font=f(10, True), fill=WHITE, anchor="mm")
     d.text((x + 14, y + 116), item["region"], font=f(11, True), fill=RED)
-    yy = para(d, x + 14, y + 135, item["title"], f(19, True, True), INK, w - 28, 2, 2)
+    yy = para(d, x + 14, y + 135, item["title"], f(21, True, True), INK, w - 28, 2, 2)
     yy = para(d, x + 14, yy + 3, item["sub"], f(12), MUTED, w - 28, 2, 2)
     d.text((x + 14, y + h - 20), item["source"], font=f(9, True), fill=GREEN)
 
@@ -316,7 +316,7 @@ def small_card(d: ImageDraw.ImageDraw, x: int, y: int, w: int, h: int,
     d.rounded_rectangle((x + 5, y + 5, x + 82, y + h - 5), radius=5, fill=bg)
     icon(d, x + 8, y + 15)
     d.text((x + 92, y + 10), region, font=f(9, True), fill=RED)
-    para(d, x + 92, y + 28, title, f(14, True), INK, w - 104, 1, 2)
+    para(d, x + 92, y + 28, title, f(15, True), INK, w - 104, 1, 2)
     d.text((x + 92, y + h - 20), "%02d" % num, font=f(10, True), fill=MUTED)
 
 
@@ -376,8 +376,8 @@ def build() -> None:
     d.line((22, 882, W - 22, 882), fill=INK, width=2)
     section_head(d, 22, 890, "ALSO ON THURSDAY · STORIES 10-36")
     for i, line in enumerate(BRIEFS):
-        col, row = divmod(i, 9)
-        d.text((22 + col * 330, 912 + row * 13), line, font=f(9), fill=INK)
+        col, row = divmod(i, 7)
+        d.text((22 + col * 248, 910 + row * 14), line, font=f(10), fill=INK)
     d.text((22, 1010), "Sources: AP · Reuters · BBC · Al Jazeera · FIDE · PIB · PTI · AFP · IANS · Yonhap",
            font=f(9), fill=MUTED)
     d.text((W - 22, 1010), "made with code, not stock photos", font=f(9, True),
