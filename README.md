@@ -5,8 +5,8 @@
 [![reward](https://make.fun/badge/news-image-20261126/dikapry/news-20261126-image/reward.svg)](https://make.fun/bounty/news-image-20261126?utm_source=github&utm_medium=readme&utm_campaign=news-image-20261126)
 
 One image summing up the world's news of Thursday 26 November 2026: a dark
-editorial poster with a stylized world map, ten numbered pins, eight illustrated
-news cards and a closing ticker. Every icon, continent and letter is drawn by
+editorial poster with eight large illustrated cards, a five-figure statistics
+strip and a three-item closing ticker. Every icon, rule and letter is drawn by
 `render.py` with Pillow primitives — no photographs, stock art or third-party
 logos. `main.ts` validates the PNG and copies it verbatim to `/output/entry.png`.
 

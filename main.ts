@@ -1,5 +1,5 @@
-// Entrypoint: validate the drawn poster and copy it verbatim to /output.
-// Standard library only; no clock, network or randomness in the judged path.
+// Entrypoint for the 26 November 2026 news image: validate the drawn PNG,
+// then copy those exact bytes to the output directory. Standard library only.
 
 import { copyFileSync, existsSync, mkdirSync, readFileSync, statSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -26,14 +26,14 @@ if (!bytes.subarray(0, 8).equals(PNG_SIGNATURE)) {
   throw new Error('entry.png is not a PNG');
 }
 
-// IHDR is always the first chunk: length(4), "IHDR", width(4), height(4).
+// IHDR is the first chunk: length(4), "IHDR", width(4), height(4), ...
 const width = bytes.readUInt32BE(16);
 const height = bytes.readUInt32BE(20);
 if (width !== SIDE || height !== SIDE) {
   throw new Error(`expected ${SIDE}x${SIDE}, got ${width}x${height}`);
 }
 
-// CRC covers the IHDR type + 13 data bytes (offset 12..28); stored at 29..32.
+// CRC covers the IHDR type plus its 13 data bytes (offsets 12..28).
 const storedCrc = bytes.readUInt32BE(29);
 if (crc32(bytes.subarray(12, 29)) !== storedCrc) {
   throw new Error('entry.png has a corrupt IHDR chunk');

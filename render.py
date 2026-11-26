@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Draw one 1024x1024 editorial poster for Thursday 26 November 2026.
+"""One 1024x1024 poster for 26 November 2026: 8 large stories, no fine print.
 
-All artwork is drawn with Pillow primitives from a fixed, verified story list.
+Every mark is drawn with Pillow primitives from a fixed, verified story list.
 No network, no photographs, no third-party logos.
 """
 
@@ -45,30 +45,15 @@ def tw(d: ImageDraw.ImageDraw, s: str, font: ImageFont.FreeTypeFont) -> int:
     return b[2] - b[0]
 
 
-def wrap(d: ImageDraw.ImageDraw, s: str, font: ImageFont.FreeTypeFont, width: int) -> list[str]:
-    out: list[str] = []
-    cur = ""
-    for word in s.split():
-        trial = (cur + " " + word).strip()
-        if cur and tw(d, trial, font) > width:
-            out.append(cur)
-            cur = word
-        else:
-            cur = trial
-    if cur:
-        out.append(cur)
-    return out
-
-
 # ---------------------------------------------------------------- icons ----
-# Each icon draws into a fresh transparent 100x100 tile; the caller pastes it.
+# Icons draw into a transparent 100x100 tile; the caller pastes it onto the poster.
 
 def icon_tariff(d: ImageDraw.ImageDraw) -> None:
-    d.text((6, 2), "14", font=f(24, True), fill=GOLD)
-    d.line((8, 88, 92, 88), fill=MUTED, width=3)
-    for i, h in enumerate((22, 38, 52, 66)):
-        d.rectangle((10 + i * 19, 86 - h, 24 + i * 19, 86), fill=RED if i > 1 else BLUE)
-    d.line((10, 40, 88, 70), fill=ORANGE, width=4)
+    d.text((4, 0), "14", font=f(26, True), fill=GOLD)
+    d.line((8, 90, 92, 90), fill=MUTED, width=3)
+    for i, h in enumerate((24, 40, 56, 72)):
+        d.rectangle((10 + i * 19, 88 - h, 24 + i * 19, 88), fill=RED if i > 1 else BLUE)
+    d.line((10, 38, 88, 70), fill=ORANGE, width=4)
     d.polygon([(88, 70), (76, 68), (84, 59)], fill=ORANGE)
 
 
@@ -93,7 +78,7 @@ def icon_flood(d: ImageDraw.ImageDraw) -> None:
     for y in (64, 76, 88):
         pts = [(x, y + (5 if x % 20 < 10 else -5)) for x in range(2, 100, 4)]
         d.line(pts, fill=TEAL, width=4)
-    d.text((4, 4), "8", font=f(20, True), fill=WHITE)
+    d.text((2, 2), "8", font=f(20, True), fill=WHITE)
 
 
 def icon_tanker(d: ImageDraw.ImageDraw) -> None:
@@ -109,7 +94,7 @@ def icon_tanker(d: ImageDraw.ImageDraw) -> None:
 def icon_wages(d: ImageDraw.ImageDraw) -> None:
     d.polygon([(6, 84), (6, 48), (28, 62), (28, 48), (50, 62), (50, 38),
                (86, 54), (86, 84)], fill="#254861", outline=WHITE, width=2)
-    d.text((10, 6), "+36%", font=f(23, True), fill=GOLD)
+    d.text((6, 4), "+36%", font=f(22, True), fill=GOLD)
     d.line((12, 34, 84, 34), fill=TEAL, width=4)
     d.polygon([(84, 34), (72, 28), (72, 40)], fill=TEAL)
 
@@ -120,7 +105,7 @@ def icon_space(d: ImageDraw.ImageDraw) -> None:
     d.polygon([(30, 68), (46, 88), (62, 68)], fill=RED)
     d.rectangle((6, 40, 30, 56), fill=BLUE, outline=WHITE, width=2)
     d.rectangle((62, 40, 86, 56), fill=BLUE, outline=WHITE, width=2)
-    d.text((6, 70), "24", font=f(16, True), fill=GOLD)
+    d.text((4, 70), "24", font=f(16, True), fill=GOLD)
 
 
 def icon_oil(d: ImageDraw.ImageDraw) -> None:
@@ -140,73 +125,52 @@ def icon_crown(d: ImageDraw.ImageDraw) -> None:
                (80, 30), (88, 74)], fill=GOLD, outline=WHITE, width=2)
     d.rectangle((12, 76, 88, 86), fill=GOLD, outline=WHITE, width=2)
     d.ellipse((44, 60, 56, 72), fill=RED)
-    d.text((4, 4), "PR", font=f(18, True), fill=TEAL)
+    d.text((2, 2), "PR", font=f(18, True), fill=TEAL)
 
 
-CARDS = [
-    (1, "US TARIFFS ON 14 PARTNERS", "up to 20% on China", RED, icon_tariff),
-    (2, "UKRAINE HITS RUSSIAN AIRBASE", "5 aircraft damaged", BLUE, icon_airbase),
-    (3, "INDONESIA MINE FLOOD", "8 dead · 18 trapped", TEAL, icon_flood),
-    (4, "CAIRO TANKER FIRE", "at least 30 dead", ORANGE, icon_tanker),
-    (5, "BANGLADESH +36% WAGES", "12,500 to 17,000 taka", GOLD, icon_wages),
-    (6, "PAKISTAN IN SPACE", "first astronaut on Tiangong", BLUE, icon_space),
-    (7, "HORMUZ / RAS TANURA", "2 tankers hit mines", RED, icon_oil),
-    (8, "MISS UNIVERSE PR", "Jennifer Barreto wins", GOLD, icon_crown),
+# number badge, two title lines, detail line, accent, icon
+STORIES = [
+    ("1", "TRUMP TARIFFS", "14 PARTNERS", "China up to 20%", RED, icon_tariff),
+    ("2", "UKRAINE", "HITS AIRBASE", "5 planes damaged", BLUE, icon_airbase),
+    ("3", "INDONESIA", "MINE FLOOD", "8 dead · 18 trapped", TEAL, icon_flood),
+    ("4", "EGYPT", "TANKER FIRE", "30+ dead near Cairo", ORANGE, icon_tanker),
+    ("5", "BANGLADESH", "+36% WAGES", "12,500 to 17,000 taka", GOLD, icon_wages),
+    ("6", "PAKISTAN", "IN SPACE", "first on Tiangong", BLUE, icon_space),
 ]
 
-PINS = [
-    (0.16, 0.24, "1"), (0.55, 0.22, "2"), (0.82, 0.64, "3"),
-    (0.54, 0.40, "4"), (0.72, 0.47, "5"), (0.86, 0.31, "6"),
-    (0.61, 0.43, "7"), (0.25, 0.38, "8"), (0.90, 0.26, "9"),
-    (0.28, 0.55, "10"),
+WIDE = [
+    ("7", "MIDDLE EAST", "RAS TANURA + HORMUZ", "2 tankers hit mines", RED, icon_oil),
+    ("8", "MISS UNIVERSE", "JENNIFER BARRETO", "San Juan, Puerto Rico", GOLD, icon_crown),
 ]
 
-CONTINENTS = [
-    [(0.03, 0.12), (0.10, 0.06), (0.21, 0.08), (0.28, 0.14), (0.25, 0.27),
-     (0.18, 0.32), (0.16, 0.45), (0.09, 0.35), (0.05, 0.24)],
-    [(0.21, 0.48), (0.30, 0.46), (0.32, 0.60), (0.26, 0.88), (0.20, 0.75), (0.18, 0.58)],
-    [(0.44, 0.18), (0.53, 0.13), (0.57, 0.20), (0.52, 0.30), (0.44, 0.28)],
-    [(0.45, 0.34), (0.56, 0.32), (0.60, 0.48), (0.54, 0.68), (0.48, 0.60), (0.43, 0.44)],
-    [(0.58, 0.12), (0.85, 0.09), (0.94, 0.24), (0.84, 0.37), (0.70, 0.43), (0.60, 0.32)],
-    [(0.81, 0.63), (0.91, 0.60), (0.94, 0.72), (0.84, 0.76)],
+STATS = [
+    ("14", "PARTNERS"), ("5", "PLANES"), ("8", "DEAD"),
+    ("+36%", "WAGES"), ("1ST", "ASTRONAUT"),
 ]
 
 
-def draw_map(im: Image.Image, d: ImageDraw.ImageDraw) -> None:
-    d.rounded_rectangle((22, 176, 1002, 430), radius=10, fill=PANEL, outline=CARD_EDGE, width=2)
-    bx, by, bw, bh = 54, 192, 920, 210
-    for gx in range(1, 8):
-        d.line((bx + gx * bw // 8, by, bx + gx * bw // 8, by + bh), fill="#142C44", width=1)
-    for gy in range(1, 4):
-        d.line((bx, by + gy * bh // 4, bx + bw, by + gy * bh // 4), fill="#142C44", width=1)
-    for poly in CONTINENTS:
-        pts = [(bx + int(px * bw), by + int(py * bh)) for px, py in poly]
-        d.polygon(pts, fill="#234761", outline="#376582")
-    for px, py, num in PINS:
-        cx, cy = bx + int(px * bw), by + int(py * bh)
-        d.ellipse((cx - 12, cy - 12, cx + 12, cy + 12), fill="#0B1726", outline=RED, width=3)
-        d.text((cx, cy), num, font=f(12, True), fill=WHITE, anchor="mm")
-    d.text((34, 404), "9 = NORTH KOREA", font=f(11, True), fill=MUTED)
-    d.text((858, 404), "10 = COLOMBIA", font=f(11, True), fill=MUTED)
-    d.text((520, 404), "10 STORIES · 10 PINNED LOCATIONS", font=f(11, True), fill=GOLD, anchor="mt")
-
-
-def draw_card(im: Image.Image, d: ImageDraw.ImageDraw, spec: tuple, x: int, y: int) -> None:
-    num, label, detail, color, icon = spec
-    d.rounded_rectangle((x, y, x + 240, y + 224), radius=10, fill=CARD, outline=CARD_EDGE, width=2)
-    d.rounded_rectangle((x + 2, y + 2, x + 238, y + 108), radius=8, fill="#102139")
-    d.rectangle((x + 14, y + 96, x + 226, y + 100), fill=color)
+def paste_icon(im: Image.Image, icon, x: int, y: int) -> None:
     tile = Image.new("RGBA", (100, 100), (0, 0, 0, 0))
     icon(ImageDraw.Draw(tile))
-    im.paste(tile, (x + 70, y + 4), tile)
-    d.ellipse((x + 196, y + 12, x + 228, y + 44), fill=color)
-    d.text((x + 212, y + 28), str(num), font=f(15, True), fill="#0B1726", anchor="mm")
-    lines = wrap(d, label, f(17, True), 214)
-    for i, line in enumerate(lines[:2]):
-        d.text((x + 13, y + 118 + i * 22), line, font=f(17, True), fill=WHITE)
-    d.text((x + 13, y + 168), detail, font=f(13), fill=MUTED)
-    d.line((x + 13, y + 196, x + 227, y + 196), fill=CARD_EDGE, width=1)
-    d.text((x + 13, y + 203), "26 NOV 2026", font=f(10, True), fill=color)
+    im.paste(tile, (x, y), tile)
+
+
+def card(im: Image.Image, d: ImageDraw.ImageDraw, x: int, y: int, w: int, h: int,
+         spec: tuple, big: bool = False) -> None:
+    num, line1, line2, detail, color, icon = spec
+    d.rounded_rectangle((x, y, x + w, y + h), radius=10, fill=CARD, outline=CARD_EDGE, width=2)
+    d.rectangle((x + 2, y + 2, x + w - 2, y + 8), fill=color)
+    paste_icon(im, icon, x + 14, y + 18)
+    badge_y = y + 18 if big else y + 118
+    d.ellipse((x + w - 52, badge_y, x + w - 18, badge_y + 34), fill=color)
+    d.text((x + w - 35, badge_y + 17), num, font=f(17, True), fill="#0B1726", anchor="mm")
+    tx = x + 124
+    title_size = 21 if big else 19
+    d.text((tx, y + 22), line1, font=f(title_size, True), fill=WHITE)
+    d.text((tx, y + 50), line2, font=f(title_size, True), fill=color)
+    d.text((tx, y + 88), detail, font=f(14), fill=MUTED)
+    d.line((x + 14, y + h - 34, x + w - 14, y + h - 34), fill=CARD_EDGE, width=1)
+    d.text((x + 14, y + h - 27), "26 NOV 2026", font=f(11, True), fill=MUTED)
 
 
 def build() -> None:
@@ -216,27 +180,38 @@ def build() -> None:
     for i, col in enumerate((RED, ORANGE, GOLD, TEAL, BLUE)):
         d.rectangle((i * W // 5, 0, (i + 1) * W // 5 - 1, 7), fill=col)
 
-    d.text((24, 24), "THE WORLD IN ONE DAY", font=f(19, True), fill=MUTED)
-    d.text((24, 52), "THURSDAY", font=f(22, True), fill=GOLD)
-    d.text((20, 82), "26 NOVEMBER 2026", font=f(62, True), fill=WHITE)
-    d.rounded_rectangle((786, 40, 1000, 150), radius=10, fill=PANEL, outline=CARD_EDGE, width=2)
-    d.text((893, 62), "ONE DAY", font=f(24, True), fill=WHITE, anchor="mm")
-    d.text((893, 98), "ONE IMAGE", font=f(24, True), fill=GOLD, anchor="mm")
-    d.line((24, 166, 1000, 166), fill=CARD_EDGE, width=2)
+    d.text((24, 22), "THURSDAY", font=f(21, True), fill=GOLD)
+    d.text((24, 50), "THE WORLD IN ONE DAY", font=f(18, True), fill=MUTED)
+    d.text((20, 76), "26 NOVEMBER 2026", font=f(64, True), fill=WHITE)
+    d.text((24, 150), "Events reported 26 Nov 2026 UTC", font=f(12), fill=MUTED)
+    d.rounded_rectangle((800, 32, 1000, 132), radius=10, fill=PANEL, outline=CARD_EDGE, width=2)
+    d.text((900, 58), "8 STORIES", font=f(20, True), fill=WHITE, anchor="mm")
+    d.text((900, 94), "ONE DAY", font=f(20, True), fill=GOLD, anchor="mm")
+    d.line((22, 172, 1002, 172), fill=CARD_EDGE, width=2)
 
-    draw_map(im, d)
+    for i, spec in enumerate(STORIES):
+        col, row = i % 3, i // 3
+        card(im, d, 22 + col * 326, 184 + row * 220, 314, 208, spec)
 
-    for i, spec in enumerate(CARDS):
-        col, row = i % 4, i // 4
-        draw_card(im, d, spec, 22 + col * 250, 444 + row * 238)
+    for i, spec in enumerate(WIDE):
+        card(im, d, 22 + i * 496, 624, 484, 134, spec, big=True)
 
-    d.rounded_rectangle((22, 930, 1002, 1004), radius=8, fill="#132941", outline=CARD_EDGE, width=2)
-    d.text((40, 948), "RUSSIA ~500,000 DEAD", font=f(16, True), fill=RED)
-    d.text((386, 948), "•", font=f(16, True), fill=MUTED)
-    d.text((410, 948), "NK 80–120 WARHEADS", font=f(16, True), fill=GOLD)
-    d.text((718, 948), "•", font=f(16, True), fill=MUTED)
-    d.text((742, 948), "COLOMBIA HOSTAGES FREED", font=f(15, True), fill=TEAL)
-    d.text((40, 978), "ILLUSTRATED WITH CODE · NO PHOTOS · 26 NOV 2026", font=f(11, True), fill=MUTED)
+    d.rounded_rectangle((22, 774, 1002, 848), radius=10, fill=PANEL, outline=CARD_EDGE, width=2)
+    for i, (big, label) in enumerate(STATS):
+        cx = 22 + int(980 * (i + 0.5) / 5)
+        d.text((cx, 788), big, font=f(32, True), fill=GOLD if i % 2 == 0 else TEAL, anchor="mt")
+        d.text((cx, 828), label, font=f(13, True), fill=WHITE, anchor="mt")
+        if i:
+            d.line((cx - 92, 792, cx - 92, 836), fill=CARD_EDGE, width=1)
+
+    d.rounded_rectangle((22, 864, 1002, 1006), radius=10, fill="#132941", outline=CARD_EDGE, width=2)
+    d.text((40, 880), "RUSSIA ~500,000 DEAD", font=f(17, True), fill=RED)
+    d.text((392, 880), "•", font=f(17, True), fill=MUTED)
+    d.text((418, 880), "NK 80–120 WARHEADS", font=f(17, True), fill=GOLD)
+    d.text((730, 880), "•", font=f(17, True), fill=MUTED)
+    d.text((756, 880), "COLOMBIA 76 FREED", font=f(16, True), fill=TEAL)
+    d.text((40, 968), "REPORTED 26 NOV 2026 · ILLUSTRATED WITH CODE · NO PHOTOS",
+           font=f(12, True), fill=MUTED)
 
     im.save(OUT, "PNG", optimize=True)
     print("wrote", OUT, os.path.getsize(OUT), "bytes", im.size)
