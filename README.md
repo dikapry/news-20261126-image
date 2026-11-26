@@ -5,7 +5,7 @@
 [![reward](https://make.fun/badge/news-image-20261126/dikapry/news-20261126-image/reward.svg)](https://make.fun/bounty/news-image-20261126?utm_source=github&utm_medium=readme&utm_campaign=news-image-20261126)
 
 One image summing up the world's news of Thursday 26 November 2026.
-A hand-drawn editorial poster: 36 stories from 9 regions, three lead
+A hand-drawn editorial poster: 20 stories from 9 regions, three lead
 illustrations, a map with pins, a UTC timeline, a by-the-numbers band and a
 date-check box separating same-day reports from older stories.
 
@@ -31,7 +31,7 @@ Leads: Macy's 100th parade postponed to Saturday; 18 years since the 26/11
 Mumbai attacks; Gukesh–Sindarov Game 3 in Geneva. Other cards cover the new US
 tariffs on 14 economies, the Cairo tanker fire, the Samara refinery strikes,
 the EU budget/Ukraine summit, Bangladesh's garment wage rise and the first
-foreigner aboard Tiangong. Twenty-seven more numbered briefs complete the day.
+foreigner aboard Tiangong. Eleven more numbered briefs complete the day.
 
 ---
 

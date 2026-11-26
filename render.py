@@ -298,19 +298,18 @@ BRIEFS = [
 
 def lead_card(im: Image.Image, d: ImageDraw.ImageDraw, x: int, y: int, w: int, h: int, item: dict) -> None:
     d.rounded_rectangle((x, y, x + w, y + h), radius=9, fill=WHITE, outline=LINE, width=2)
-    d.rounded_rectangle((x + 6, y + 6, x + w - 6, y + 128), radius=6, fill=item["bg"])
+    d.rounded_rectangle((x + 6, y + 6, x + w - 6, y + 106), radius=6, fill=item["bg"])
     tile = Image.new("RGBA", (80, 80), (0, 0, 0, 0))
     item["icon"](ImageDraw.Draw(tile), 0, 0)
-    tile = tile.resize((132, 132), Image.Resampling.LANCZOS)
-    im.paste(tile, (x + 16, y + 6), tile)
+    im.paste(tile, (x + 22, y + 12), tile)
     d.ellipse((x + w - 46, y + 12, x + w - 12, y + 46), fill=RED)
     d.text((x + w - 29, y + 29), item["n"], font=f(18, True), fill=WHITE, anchor="mm")
-    d.rectangle((x + w - 150, y + 94, x + w - 16, y + 120), fill=NAVY)
-    d.text((x + w - 83, y + 107), item["tag"], font=f(10, True), fill=WHITE, anchor="mm")
-    d.text((x + 14, y + 136), item["region"], font=f(11, True), fill=RED)
-    yy = para(d, x + 14, y + 155, item["title"], f(21, True, True), INK, w - 28, 2, 2)
+    d.rectangle((x + w - 150, y + 66, x + w - 16, y + 92), fill=NAVY)
+    d.text((x + w - 83, y + 79), item["tag"], font=f(10, True), fill=WHITE, anchor="mm")
+    d.text((x + 14, y + 116), item["region"], font=f(11, True), fill=RED)
+    yy = para(d, x + 14, y + 135, item["title"], f(21, True, True), INK, w - 28, 2, 2)
     yy = para(d, x + 14, yy + 3, item["sub"], f(12), MUTED, w - 28, 2, 2)
-    d.text((x + 14, y + h - 19), item["source"], font=f(9, True), fill=GREEN)
+    d.text((x + 14, y + h - 20), item["source"], font=f(9, True), fill=GREEN)
 
 
 def small_card(d: ImageDraw.ImageDraw, x: int, y: int, w: int, h: int,
@@ -334,7 +333,7 @@ def build() -> None:
 
     d.rectangle((0, 0, W, 32), fill=NAVY)
     d.text((22, 9), "MAKE.FUN  ·  A DAY IN WORLD NEWS", font=f(12, True), fill=WHITE)
-    d.text((W - 22, 9), "36 STORIES  ·  9 REGIONS  ·  26 NOV 2026", font=f(12, True),
+    d.text((W - 22, 9), "20 STORIES  ·  9 REGIONS  ·  26 NOV 2026", font=f(12, True),
            fill=GOLD, anchor="ra")
 
     d.text((22, 42), "THURSDAY", font=f(18, True), fill=RED)
@@ -348,12 +347,12 @@ def build() -> None:
 
     cw, gap = 320, 12
     for i, item in enumerate(LEADS):
-        lead_card(im, d, 22 + i * (cw + gap), 164, cw, 248, item)
+        lead_card(im, d, 22 + i * (cw + gap), 164, cw, 232, item)
 
-    section_head(d, 22, 420, "THE DAY'S OTHER BIG STORIES · 4-9")
+    section_head(d, 22, 406, "THE DAY'S OTHER BIG STORIES · 4-9")
     for i, (region, title, icon, bg) in enumerate(SECONDARY):
         col, row = i % 3, i // 3
-        small_card(d, 22 + col * (cw + gap), 440 + row * 110, cw, 104,
+        small_card(d, 22 + col * (cw + gap), 428 + row * 112, cw, 104,
                    region, title, icon, bg, i + 4)
 
     d.rectangle((22, 660, W - 22, 710), fill=NAVY)
@@ -377,10 +376,10 @@ def build() -> None:
         d.text((710, 750 + i * 17), "· " + line, font=f(10), fill=MUTED)
 
     d.line((22, 882, W - 22, 882), fill=INK, width=2)
-    section_head(d, 22, 890, "ALSO ON THURSDAY · STORIES 10-36")
-    for i, line in enumerate(BRIEFS):
-        col, row = divmod(i, 9)
-        d.text((22 + col * 330, 902 + row * 13), line, font=f(11), fill=INK)
+    section_head(d, 22, 890, "ALSO ON THURSDAY · STORIES 10-20")
+    for i, line in enumerate(BRIEFS[:11]):
+        col, row = divmod(i, 6)
+        d.text((22 + col * 490, 910 + row * 17), line, font=f(13), fill=INK)
 
     im.save(OUT, "PNG", optimize=True)
     print("wrote", OUT, os.path.getsize(OUT), "bytes", im.size)
